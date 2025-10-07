@@ -4,8 +4,7 @@ A powerful and user-friendly desktop application built with Python and PySide6 t
 
 Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the cleaning process with a rich set of features, a multi-language interface, and robust safety mechanisms like Undo and Dry-run mode.
 
-**(مهم: قم بأخذ لقطة شاشة للتطبيق وضعها هنا! استبدل الرابط أدناه)**
-`![Sortify Screenshot](link_to_your_screenshot.png)`
+`![Sortify Screenshot](File-Organizer_v2/Capture.PNG)`
 
 ---
 

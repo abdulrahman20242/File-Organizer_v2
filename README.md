@@ -48,7 +48,7 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
     cd File-Organizer_v2
     ```
 
-2.  Make sure you have a compatible Python version installed (Python 3.12 is recommended for best library compatibility, though the app also runs on 3.13).
+2.  Make sure you have a compatible Python version installed (Python 3.12 is recommended for best library compatibility).
 
 3.  Install the required libraries using pip:
     ```bash
@@ -92,9 +92,9 @@ You can easily customize which file extensions belong to which category by editi
 
 This project includes a comprehensive test suite to ensure the core logic is working correctly. To run the tests:
 
-1.  Install the development dependencies (optional):
+1.  Install the development dependencies from `requirements-dev.txt`:
     ```bash
-    pip install pytest
+    pip install -r requirements-dev.txt
     ```
 2.  Run pytest from the project's root directory:
     ```bash
@@ -105,9 +105,10 @@ This project includes a comprehensive test suite to ensure the core logic is wor
 
 ## 📒 Project Structure
 
-*   `file_organizer.py`: Contains all the backend logic for file operations (listing, moving, organizing, undoing). It has no dependency on the GUI.
+*   `file_organizer.py`: Contains all the backend logic for file operations. It has no dependency on the GUI.
 *   `file_organizer_gui.py`: The main file for the PySide6 graphical user interface.
-*   `translations.json`: Stores the text strings for multi-language support (English & Arabic).
+*   `translations.json`: Stores text strings for multi-language support (English & Arabic).
 *   `categories.json`: Default and user-customizable file type categories.
 *   `test_organizer.py`: The `pytest` test suite for the backend logic.
-*   `requirements.txt`: Project dependencies.
+*   `requirements.txt`: Contains the main dependencies required to run the application.
+*   `requirements-dev.txt`: Contains extra dependencies for development, such as for running tests (`pytest`).

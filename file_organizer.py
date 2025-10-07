@@ -195,7 +195,7 @@ def perform_undo(on_progress: Optional[Callable[[int, int], None]] = None):
     total = len(lines)
     succeeded = failed = 0
     
-    for idx, line in enumerate(reversed(lines), start=1): # Process in reverse order
+    for idx, line in enumerate(reversed(lines), start=1):
         try:
             action, original_src, final_dst = line.strip().split('|')
             original_src = Path(original_src)
@@ -214,7 +214,7 @@ def perform_undo(on_progress: Optional[Callable[[int, int], None]] = None):
         if on_progress:
             on_progress(idx, total)
             
-    clear_undo_log() # Clear log after attempting undo
+    clear_undo_log()
     return {"total": total, "succeeded": succeeded, "failed": failed}
 
 def process_directory(**kwargs) -> Dict[str, int]:
@@ -247,6 +247,5 @@ def process_directory(**kwargs) -> Dict[str, int]:
 
         if 'on_progress' in kwargs:
             kwargs['on_progress'](idx, total, item, result)
-
 
     return { "total": total, "processed": processed, "succeeded": succeeded, "failed": failed, "skipped": skipped }

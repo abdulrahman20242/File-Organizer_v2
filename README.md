@@ -39,8 +39,17 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
 
 ## 🛠️ Installation
 
-1.  Clone or download this repository.
-2.  Make sure you have **Python 3.13+** installed.
+1.  Clone the repository to your local machine using Git:
+    ```bash
+    git clone https://github.com/abdulrahman20242/File-Organizer_v2.git
+    ```
+    Then, navigate into the newly created project directory:
+    ```bash
+    cd File-Organizer_v2
+    ```
+
+2.  Make sure you have a compatible Python version installed (Python 3.12 is recommended for best library compatibility, though the app also runs on 3.13).
+
 3.  Install the required libraries using pip:
     ```bash
     pip install -r requirements.txt
@@ -83,9 +92,9 @@ You can easily customize which file extensions belong to which category by editi
 
 This project includes a comprehensive test suite to ensure the core logic is working correctly. To run the tests:
 
-1.  Install the development dependencies:
+1.  Install the development dependencies (optional):
     ```bash
-    pip install -r requirements-dev.txt
+    pip install pytest
     ```
 2.  Run pytest from the project's root directory:
     ```bash

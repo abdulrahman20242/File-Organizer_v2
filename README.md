@@ -23,6 +23,7 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
 
 ### User Experience & Interface
 *   **Modern GUI:** Clean and intuitive interface built with PySide6.
+*   **Easy Windows Launch:** Includes a `Sortify.bat` script for double-click execution.
 *   **Real-time Progress:** A progress bar shows the status of organizing and undoing operations, ensuring the app never freezes.
 *   **Detailed Results Table:** See the status of each file (Success, Skipped, Failed) in a clear, color-coded table.
 *   **Multi-language Support:** Switch between **English** and **Arabic** on the fly.
@@ -59,11 +60,15 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
 
 ## 🖥️ Usage
 
-Run the graphical application from your terminal:
+You can run the application in two ways:
 
-```bash
-python file_organizer_gui.py
-```
+1.  **From the terminal (all platforms):**
+    ```bash
+    python file_organizer_gui.py
+    ```
+
+2.  **On Windows (easy method):**
+    Simply double-click the **`Sortify.bat`** file.
 
 **How it works:**
 
@@ -105,10 +110,11 @@ This project includes a comprehensive test suite to ensure the core logic is wor
 
 ## 📒 Project Structure
 
-*   `file_organizer.py`: Contains all the backend logic for file operations. It has no dependency on the GUI.
+*   `file_organizer.py`: Contains all the backend logic for file operations.
 *   `file_organizer_gui.py`: The main file for the PySide6 graphical user interface.
-*   `translations.json`: Stores text strings for multi-language support (English & Arabic).
+*   `Sortify.bat`: A simple batch script for launching the GUI on Windows.
+*   `translations.json`: Stores text strings for multi-language support.
 *   `categories.json`: Default and user-customizable file type categories.
 *   `test_organizer.py`: The `pytest` test suite for the backend logic.
-*   `requirements.txt`: Contains the main dependencies required to run the application.
-*   `requirements-dev.txt`: Contains extra dependencies for development, such as for running tests (`pytest`).
+*   `requirements.txt`: Main dependencies required to run the application.
+*   `requirements-dev.txt`: Extra dependencies for development and testing.

@@ -1,4 +1,3 @@
-# file_organizer.py (النسخة النهائية مع perform_undo المحدثة)
 import logging
 import shutil
 import sys
@@ -248,5 +247,6 @@ def process_directory(**kwargs) -> Dict[str, int]:
 
         if 'on_progress' in kwargs:
             kwargs['on_progress'](idx, total, item, result)
+
 
     return { "total": total, "processed": processed, "succeeded": succeeded, "failed": failed, "skipped": skipped }

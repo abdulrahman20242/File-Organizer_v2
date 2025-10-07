@@ -1,4 +1,3 @@
-# file_organizer_gui.py (النسخة المحدثة مع شريط تقدم للتراجع)
 import sys
 import json
 import logging
@@ -6,7 +5,6 @@ import os
 from pathlib import Path
 import threading
 
-# ... (بقية استيرادات PySide6 لم تتغير)
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox,
     QLabel, QLineEdit, QPushButton, QComboBox, QCheckBox, QProgressBar,
@@ -19,12 +17,10 @@ from PySide6.QtGui import QColor, QAction, QKeySequence, QActionGroup
 import qtawesome as qta
 import file_organizer
 
-# ... (BASE_DIR, SETTINGS_FILE, PROFILES_FILE لم تتغير)
 BASE_DIR = Path(__file__).parent
 SETTINGS_FILE = BASE_DIR / "settings.json"
 PROFILES_FILE = BASE_DIR / "profiles.json"
 
-# ... (فئة Translator لم تتغير)
 class Translator:
     def __init__(self, lang="en"):
         self.lang = lang; self.data = {"en": {}}
@@ -36,14 +32,12 @@ class Translator:
     def t(self, key, default=None):
         return self.data.get(self.lang, {}).get(key, self.data.get("en", {}).get(key, default or key))
 
-# ... (فئة QtLogHandler لم تتغير)
 class QtLogHandler(logging.Handler):
     def __init__(self, log_signal: Signal):
         super().__init__(); self.log_signal = log_signal
     def emit(self, record):
         msg = self.format(record); self.log_signal.emit(msg)
 
-# ... (فئة OrganizerWorker لم تتغير)
 class OrganizerWorker(QThread):
     progress_updated = Signal(int, int)
     result_logged = Signal(str, str, str, str)
@@ -80,30 +74,23 @@ class OrganizerWorker(QThread):
     def cancel(self):
         if 'cancel_event' in self.params: self.params['cancel_event'].set()
 
-# <<< فئة جديدة لعملية التراجع >>>
 class UndoWorker(QThread):
     progress_updated = Signal(int, int)
     finished = Signal(dict)
     log_message = Signal(str)
 
     def run(self):
-        # توجيه سجل العمليات إلى الواجهة
         logger = logging.getLogger("file_organizer")
         for h in logger.handlers[:]: logger.removeHandler(h)
         handler = QtLogHandler(self.log_message)
         handler.setFormatter(logging.Formatter("%(message)s"))
         logger.addHandler(handler)
-
         def on_progress_callback(current, total):
             self.progress_updated.emit(current, total)
-        
         stats = file_organizer.perform_undo(on_progress=on_progress_callback)
         self.finished.emit(stats)
 
-
-# ... (فئات CategoryEditorDialog, PathLineEdit, ManageProfilesDialog لم تتغير)
 class CategoryEditorDialog(QDialog):
-    # ... (الكود لم يتغير)
     def __init__(self, parent=None):
         super().__init__(parent); self.tr = parent.tr; self.setWindowTitle(self.tr.t("manage_categories")); self.setMinimumSize(600, 400)
         self.categories_data = {k: list(v) for k, v in file_organizer.load_categories().items()}
@@ -198,7 +185,6 @@ class ManageProfilesDialog(QDialog):
             self.parent()._save_profiles()
             self.parent()._update_profiles_menu()
 
-
 class FileOrganizerGUI(QMainWindow):
     log_signal = Signal(str)
     
@@ -206,7 +192,7 @@ class FileOrganizerGUI(QMainWindow):
         super().__init__()
         self.tr = Translator("en")
         self.organizer_worker: OrganizerWorker | None = None
-        self.undo_worker: UndoWorker | None = None # <<< إضافة متغير للـ Worker الجديد
+        self.undo_worker: UndoWorker | None = None
         self.profiles = {}
         self.load_profiles()
         self._setup_combo_boxes()
@@ -219,7 +205,6 @@ class FileOrganizerGUI(QMainWindow):
         self.load_settings()
         self.change_lang()
 
-    # ... (كل الدوال من _setup_combo_boxes إلى on_result_logged لم تتغير)
     def _setup_combo_boxes(self):
         self.modes = { "type": "mode_type", "name": "mode_name", "date": "mode_date", "size": "mode_size", "first_letter": "mode_first_letter" }
         self.mode_tooltips = { "type": "mode_type_desc", "name": "mode_name_desc", "date": "mode_date_desc", "size": "mode_size_desc", "first_letter": "mode_first_letter_desc" }
@@ -340,7 +325,6 @@ class FileOrganizerGUI(QMainWindow):
 
     def set_controls_enabled(self, enabled):
         self.run_action.setEnabled(enabled)
-        # زر الإلغاء يُفعل فقط إذا كان هناك عملية تنظيم رئيسية تعمل
         self.cancel_action.setEnabled(not enabled and self.organizer_worker is not None and self.organizer_worker.isRunning())
         for group in self.centralWidget().findChildren(QGroupBox): group.setEnabled(enabled)
         self.menu_bar.setEnabled(enabled)
@@ -364,7 +348,6 @@ class FileOrganizerGUI(QMainWindow):
         self.table_view.setItem(row, 0, item_name); self.table_view.setItem(row, 1, item_dest)
         self.table_view.setItem(row, 2, status_item); self.table_view.scrollToBottom()
 
-    # ... (دوال ملفات التعريف لم تتغير)
     def load_profiles(self):
         if not PROFILES_FILE.exists(): self.profiles = {}; return
         try:
@@ -427,7 +410,6 @@ class FileOrganizerGUI(QMainWindow):
     def open_category_editor(self):
         dialog = CategoryEditorDialog(self); dialog.exec()
     
-    # ... (run_organizer والدوال المرتبطة به لم تتغير)
     @Slot()
     def run_organizer(self):
         source_text = self.txt_source.text().strip()
@@ -466,12 +448,11 @@ class FileOrganizerGUI(QMainWindow):
         self.organizer_worker = None
         self.set_controls_enabled(True); self.table_view.resizeColumnsToContents()
     
-    # <<< دالة undo_operation المعدلة >>>
     @Slot()
     def undo_operation(self):
         if QMessageBox.question(self, self.tr.t("confirm_undo"), self.tr.t("confirm_undo_msg")) == QMessageBox.StandardButton.Yes:
             self.set_controls_enabled(False)
-            self.lbl_status.setText(self.tr.t("starting")) # يمكنك إضافة ترجمة جديدة لـ "Undoing..."
+            self.lbl_status.setText(self.tr.t("starting"))
             self.progress.setVisible(True)
             self.progress.setValue(0)
             self.tabs.setCurrentIndex(0)
@@ -482,14 +463,12 @@ class FileOrganizerGUI(QMainWindow):
             self.undo_worker.log_message.connect(self.log_view.append)
             self.undo_worker.start()
 
-    # <<< دالة جديدة لتحديث شريط تقدم التراجع >>>
     @Slot(int, int)
     def on_undo_progress(self, current, total):
         if self.progress.maximum() != total:
             self.progress.setRange(0, total)
         self.progress.setValue(current)
 
-    # <<< دالة جديدة للتعامل مع انتهاء عملية التراجع >>>
     @Slot(dict)
     def on_undo_finished(self, stats):
         self.progress.setVisible(False)

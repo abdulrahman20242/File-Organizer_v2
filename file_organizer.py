@@ -40,12 +40,14 @@ def load_categories() -> Dict[str, Set[str]]:
         return DEFAULT_CATEGORIES
 
 def build_ext_index(categories: Dict[str, Set[str]]) -> Dict[str, str]:
+    """Builds a mapping from file extension to category name."""
     idx: Dict[str, str] = {}
     for cat, exts in categories.items():
         for e in exts:
-            if e and e not in idx:
-                idx[e] = e.lower()
-                idx[e] = cat
+            if e:
+                e_lower = e.lower()
+                if e_lower not in idx:
+                    idx[e_lower] = cat
     return idx
 
 def unique_path(path: Path) -> Path:
@@ -61,7 +63,8 @@ def unique_path(path: Path) -> Path:
 def resolve_conflict(destination: Path, conflict_policy: str) -> Optional[Path]:
     if not destination.exists():
         return destination
-    if conflict_policy == "skip": return None
+    if conflict_policy == "skip":
+        return None
     elif conflict_policy == "overwrite":
         try:
             if destination.is_file() or destination.is_symlink():
@@ -69,8 +72,10 @@ def resolve_conflict(destination: Path, conflict_policy: str) -> Optional[Path]:
         except OSError as e:
             logger.warning("Could not remove existing file for overwrite: %s (%s)", destination, e)
         return destination
-    elif conflict_policy == "rename": return unique_path(destination)
-    else: raise ValueError(f"Unknown conflict policy: {conflict_policy}")
+    elif conflict_policy == "rename":
+        return unique_path(destination)
+    else:
+        raise ValueError(f"Unknown conflict policy: {conflict_policy}")
 
 def log_undo_operation(action: str, src: Path, dst: Path):
     """Logs a successful file transfer for potential rollback."""
@@ -106,13 +111,15 @@ def organize_by_type(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
     cat = ext_index.get(file.suffix.lower(), "Others")
     dest_file = dest_root / cat / file.name
     final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
-    if final_dest is None: return None
+    if final_dest is None:
+        return None
     return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
 
 def organize_by_name(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
     dest_file = dest_root / file.stem / file.name
     final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
-    if final_dest is None: return None
+    if final_dest is None:
+        return None
     return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
 
 def organize_by_date(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
@@ -122,7 +129,8 @@ def organize_by_date(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
         dest_dir = dest_root / str(date.year) / f"{date.month:02d}-{date.strftime('%B')}"
         dest_file = dest_dir / file.name
         final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
-        if final_dest is None: return None
+        if final_dest is None:
+            return None
         return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
     except Exception as e:
         logger.error(f"Could not get date for {file.name}: {e}")
@@ -131,12 +139,16 @@ def organize_by_date(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
 def organize_by_size(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
     try:
         size_mb = file.stat().st_size / (1024 * 1024)
-        if size_mb < 1: cat = "Small (Under 1MB)"
-        elif size_mb < 100: cat = "Medium (1-100MB)"
-        else: cat = "Large (Over 100MB)"
+        if size_mb < 1:
+            cat = "Small (Under 1MB)"
+        elif size_mb < 100:
+            cat = "Medium (1-100MB)"
+        else:
+            cat = "Large (Over 100MB)"
         dest_file = dest_root / cat / file.name
         final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
-        if final_dest is None: return None
+        if final_dest is None:
+            return None
         return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
     except Exception as e:
         logger.error(f"Could not get size for {file.name}: {e}")
@@ -147,7 +159,8 @@ def organize_by_first_letter(file: Path, dest_root: Path, **kwargs) -> Optional[
     cat = first_letter if first_letter.isalpha() else "#"
     dest_file = dest_root / cat / file.name
     final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
-    if final_dest is None: return None
+    if final_dest is None:
+        return None
     return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
 
 ORGANIZERS = {
@@ -186,7 +199,8 @@ def perform_undo(on_progress: Optional[Callable[[int, int], None]] = None):
     """
     if not UNDO_LOG_FILE.exists():
         logger.info("No undo log found. Nothing to revert.")
-        if on_progress: on_progress(0, 0)
+        if on_progress:
+            on_progress(0, 0)
         return {"total": 0, "succeeded": 0, "failed": 0}
     
     with open(UNDO_LOG_FILE, "r", encoding="utf-8") as f:
@@ -241,11 +255,20 @@ def process_directory(**kwargs) -> Dict[str, int]:
         result = organizer_func(item, dest, ext_index=ext_index, **kwargs)
         
         processed += 1
-        if result is None: skipped += 1
-        elif result: succeeded += 1
-        else: failed += 1
+        if result is None:
+            skipped += 1
+        elif result:
+            succeeded += 1
+        else:
+            failed += 1
 
         if 'on_progress' in kwargs:
             kwargs['on_progress'](idx, total, item, result)
 
-    return { "total": total, "processed": processed, "succeeded": succeeded, "failed": failed, "skipped": skipped }
+    return {
+        "total": total,
+        "processed": processed,
+        "succeeded": succeeded,
+        "failed": failed,
+        "skipped": skipped
+    }

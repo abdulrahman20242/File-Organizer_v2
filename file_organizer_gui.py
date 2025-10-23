@@ -337,6 +337,7 @@ class FileOrganizerGUI(QMainWindow):
             "type": "mode_type",
             "name": "mode_name",
             "date": "mode_date",
+            "day": "mode_day",
             "size": "mode_size",
             "first_letter": "mode_first_letter"
         }
@@ -344,6 +345,7 @@ class FileOrganizerGUI(QMainWindow):
             "type": "mode_type_desc",
             "name": "mode_name_desc",
             "date": "mode_date_desc",
+            "day": "mode_day_desc",
             "size": "mode_size_desc",
             "first_letter": "mode_first_letter_desc"
         }

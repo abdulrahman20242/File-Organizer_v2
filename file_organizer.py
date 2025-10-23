@@ -136,6 +136,21 @@ def organize_by_date(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
         logger.error(f"Could not get date for {file.name}: {e}")
         return False
 
+def organize_by_day(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
+    """Organizes files into YYYY/MM/DD structure."""
+    try:
+        m_time = file.stat().st_mtime
+        date = datetime.fromtimestamp(m_time)
+        dest_dir = dest_root / str(date.year) / f"{date.month:02d}" / f"{date.day:02d}"
+        dest_file = dest_dir / file.name
+        final_dest = resolve_conflict(dest_file, kwargs['conflict_policy'])
+        if final_dest is None:
+            return None
+        return do_transfer(file, final_dest, kwargs['action'], kwargs['dry_run'])
+    except Exception as e:
+        logger.error(f"Could not get date for {file.name}: {e}")
+        return False
+
 def organize_by_size(file: Path, dest_root: Path, **kwargs) -> Optional[bool]:
     try:
         size_mb = file.stat().st_size / (1024 * 1024)
@@ -167,6 +182,7 @@ ORGANIZERS = {
     "type": organize_by_type,
     "name": organize_by_name,
     "date": organize_by_date,
+    "day": organize_by_day,
     "size": organize_by_size,
     "first_letter": organize_by_first_letter,
 }

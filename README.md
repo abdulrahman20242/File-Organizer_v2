@@ -1,4 +1,3 @@
-
 # 📂 Sortify - Advanced File Organizer
 
 A powerful and user-friendly desktop application built with Python and PySide6 to intelligently sort your files into clean, organized folders.

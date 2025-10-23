@@ -73,6 +73,28 @@ def test_organize_by_date(tmp_path):
     expected_path = dest / "2023" / "10-October" / "file_from_past.txt"
     assert expected_path.exists()
 
+def test_organize_by_day(tmp_path):
+    source, dest = tmp_path / "source", tmp_path / "dest"
+    source.mkdir()
+    test_file = source / "file_specific.log"
+    test_file.touch()
+    
+    test_date = datetime.datetime(2025, 10, 16)
+    m_time = test_date.timestamp()
+    os.utime(test_file, (m_time, m_time))
+
+    file_organizer.organize_by_day(
+        test_file,
+        dest,
+        action="move",
+        conflict_policy="rename",
+        dry_run=False
+    )
+    
+    expected_path = dest / "2025" / "10" / "16" / "file_specific.log"
+    assert expected_path.exists()
+    assert not test_file.exists()
+
 def test_organize_by_size(test_environment):
     source, dest = test_environment
     file_organizer.organize_by_size(

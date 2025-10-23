@@ -66,7 +66,7 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
     Bash
     
     ```
-    git clone https://github.com/abdulrahman20242/File-Organizer_v2.git
+    git clone https://github.com/abdulrahman20242/File-Organizer_v2.1.git
     ```
     
     Then, navigate into the newly created project directory:
@@ -74,7 +74,7 @@ Tired of cluttered "Downloads" or "Desktop" folders? Sortify automates the clean
     Bash
     
     ```
-    cd File-Organizer_v2
+    cd File-Organizer_v2.1
     ```
     
 2. Make sure you have a compatible Python version installed (Python 3.12 is recommended for best library compatibility).
